@@ -1,0 +1,161 @@
+:root {
+	/* primary colors */
+	--purple: #854dff;
+	--light-red: hsl(0, 100%, 67%);
+
+	/* neutral colors */
+	--off-white: #f0f0f0;
+	--white: #ffffff;
+	--smokey-gray: #716f6f;
+	--light-gray: #dbdbdb;
+	--off-black: #141414;
+}
+
+/* 
+- Font size (inputs): 32px
+
+- Family: [Poppins](https://fonts.google.com/specimen/Poppins)
+- Weights: 400i, 700, 800i
+*/
+
+* {
+	box-sizing: border-box;
+	font-family: 'Poppins', sans-serif;
+	margin: 0;
+	padding: 0;
+}
+
+main {
+	align-items: center;
+	background-color: var(--off-white);
+	display: flex;
+	justify-content: center;
+	min-height: 100vh;
+}
+
+/* --------------- card */
+.card {
+	/* height: 651px; */
+	background-color: var(--white);
+	border-radius: 24px 24px 200px;
+	padding: 56px;
+	width: 840px;
+}
+
+/* --------------- form */
+.form {
+	display: flex;
+	flex-direction: row;
+	gap: 32px;
+}
+
+.form__section {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.form__label {
+	color: var(--smokey-gray);
+	font-size: 0.875rem;
+	font-weight: 700;
+}
+
+.form__label--error {
+	color: var(--light-red);
+	font-size: 0.875rem;
+}
+
+.form__input {
+	border: none;
+	border: 1px solid #15151540;
+	border-radius: 8px;
+	color: var(--off-black);
+	font-size: 2rem;
+	height: 72px;
+	padding: 12px 24px;
+	width: 160px;
+}
+
+.form__input::placeholder {
+	color: #15151580;
+}
+
+.form__input:focus {
+	border: 1px solid var(--purple);
+	outline: none;
+}
+
+.form__input--error {
+	border: 1px solid var(--light-red);
+}
+
+/* Removing arrows on inputs */
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+/* Firefox */
+input[type='number'] {
+	appearance: textfield;
+}
+
+.form__input--error-msg {
+	color: var(--light-red);
+	font-size: 0.875rem;
+	font-style: italic;
+	font-weight: 400;
+}
+
+/* --------------- division */
+.division {
+	background: url('/line.webp');
+	background-position: center;
+	background-repeat: repeat-x;
+}
+
+.division__button {
+	background-color: var(--purple);
+	border: none;
+	border-radius: 50%;
+	/* margin-right: auto; */
+	display: block;
+	height: 96px;
+	margin-left: auto;
+	width: 96px;
+}
+
+.division__button:hover {
+	background-color: var(--off-black);
+	cursor: pointer;
+}
+
+.division-icon {
+	color: var(--purple);
+}
+
+/* --------------- results */
+.results-section {
+	display: flex;
+	gap: 8px;
+}
+
+.results-section__result {
+	color: var(--purple);
+	font-size: 6.5rem;
+	font-style: italic;
+	font-weight: 800;
+	line-height: 110px;
+}
+
+.results-section__label {
+	color: var(--off-black);
+	font-size: 6.5rem;
+	font-style: italic;
+	font-weight: 800;
+	line-height: 110px;
+}
