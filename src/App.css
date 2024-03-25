@@ -64,6 +64,7 @@ main {
 .form__label--error {
 	color: var(--light-red);
 	font-size: 0.875rem;
+	font-weight: 700;
 }
 
 .form__input {
