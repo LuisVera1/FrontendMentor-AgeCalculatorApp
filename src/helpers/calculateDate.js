@@ -1,13 +1,9 @@
-const getLastDigit = (number) => {
-	const numStr = number.toString();
-	const numberLength = numStr.length;
-	return Number(numStr[numberLength - 1]);
-};
-
 export const getYears = (sTime, eTime) => {
 	const sDate = new Date(sTime.year, sTime.month, sTime.day);
 	const eDate = new Date(eTime.year, eTime.month, eTime.day);
 	const days = (eDate - sDate) / (1000 * 60 * 60 * 24);
+
+	if (days < 0) return null;
 
 	const years = Math.floor(days / 365);
 
@@ -75,35 +71,11 @@ export const getMonths = ({ remainDays, currentMonth, currentYear }) => {
 /*   main function   */
 export const calculateDate = (sTime, eTime) => {
 	const yearsAndDays = getYears(sTime, eTime);
-	const { years, remainDays, currentMonth, currentYear } = yearsAndDays;
+	if (!yearsAndDays) return null;
 
+	const { years, remainDays, currentMonth, currentYear } = yearsAndDays;
 	const monthsAndDays = getMonths({ remainDays, currentMonth, currentYear });
 	const { months, days } = monthsAndDays;
 
 	return { years, months, days };
-
-	// const tYears = Math.floor(difference / 365);
-	// const tMonths = Math.floor((difference % 365) / 30);
-	// const tDays = difference - tYears * 365 - tMonths * 30;
-
-	// const dYears = getLastDigit(tYears);
-	// const dMonths = getLastDigit(tMonths);
-	// const dDays = getLastDigit(tDays);
-
-	// console.log('🚀 - tYears:', tYears);
-	// console.log('🚀 - tMonths:', tMonths);
-	// console.log('🚀 - tDays:', tDays);
-
-	// console.log('🚀 - dYears:', dYears);
-	// console.log('🚀 - dMonths:', dMonths);
-	// console.log('🚀 - dDays:', dDays);
-
-	// return {
-	// 	years: tYears - dYears,
-	// 	yearsI: tYears,
-	// 	months: tMonths - dMonths,
-	// 	monthsI: tMonths,
-	// 	days: tDays - dDays,
-	// 	daysI: tDays,
-	// };
 };
