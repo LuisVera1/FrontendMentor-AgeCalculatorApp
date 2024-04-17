@@ -1,11 +1,13 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
+import { calculateDate, getDataCounter, validateForm } from './helpers';
 import './App.css'
-import { validateForm } from './helpers/validateForm';
-import { calculateDate } from './helpers/calculateDate';
 
-//TODO valiate date fewer than today p.e. 29Feb2024, return negative values
-//TODO number increment when inputs change before calculate
-//TODO global error doesnt disapear
+const animationTemp = 70;
+const steps = {
+  start: 'start',
+  calc: 'Cal',
+  counter: 'counter',
+}
 
 const initialState = {
   day: {
@@ -23,73 +25,100 @@ const initialState = {
     error: false,
     msg: ''
   },
-  difference: null,
+  globalError: false,
+  step: steps.start,
 }
 
 const initialResults = {
   years: '--',
-  yearsI: 0,
+  yearsI: '--',
   months: '--',
-  monthsI: 0,
+  monthsI: '--',
   days: '--',
-  daysI: 0,
+  daysI: '--',
 }
 
 function App() {
   const [state, setState] = useState(initialState);
   const [results, setResults] = useState(initialResults);
-  const difference = useRef(null);
 
-  //Calculate difference
+  //Calculate differente
   useEffect(() => {
-    if (state.difference) {
-      const results = calculateDate(state.difference);
-      setResults(results);
+    if (state.step == steps.calc) {
+      const { year, month, day } = state;
+      const today = new Date();
+      const sDate = new Date(year.value, month.value - 1, day.value);
+
+      const result = calculateDate(sDate, today);
+      if (result == null) {
+        setState({ ...state, step: steps.start })
+      } else {
+        const valuesForCounter = getDataCounter(result)
+
+        setState({ ...state, step: steps.counter })
+        setResults(valuesForCounter)
+      }
     }
-  }, [state])
+  }, [state.step])
 
   //contols increments
   useEffect(() => {
-    setTimeout(() => {
-      let resultsIncrement = { ...results }
-      let difValues = 0;
 
-      //days
-      if (results.days < results.daysI) {
-        resultsIncrement.days = resultsIncrement.days + 1;
-        difValues++
-      }
+    if (state.step == steps.counter) {
+      setTimeout(() => {
+        let resultsIncrement = { ...results }
+        let difValues = 0;
 
-      //months
-      if (results.months < results.monthsI) {
-        resultsIncrement.months = resultsIncrement.months + 1;
-        difValues++
-      }
+        //days
+        if (results.days > results.daysI) {
+          resultsIncrement.daysI = resultsIncrement.daysI + 1;
+          difValues++
+        }
 
-      //years
-      if (results.years < results.yearsI) {
-        resultsIncrement.years = resultsIncrement.years + 1;
-        difValues++
-      }
+        //months
+        if (results.months > results.monthsI) {
+          resultsIncrement.monthsI = resultsIncrement.monthsI + 1;
+          difValues++
+        }
 
-      if (difValues > 0) setResults(resultsIncrement)
-    }, 50)
-  }, [results])
+        //years
+        if (results.years > results.yearsI) {
+          resultsIncrement.yearsI = resultsIncrement.yearsI + 1;
+          difValues++
+        }
+
+        if (difValues > 0) {
+          setResults(resultsIncrement)
+        } else {
+          setState({ ...state, step: steps.start })
+        }
+      }, animationTemp)
+    }
+  }, [state.counter, results])
 
   const onInput = (event) => {
     const { value, name } = event.target;
     const { error, message } = validateForm({ value, name });
-    const newState = { ...state, [name]: { value: value, error: error, msg: message } };
+    const newState = {
+      ...state,
+      globalError: false,
+      [name]: {
+        value: value,
+        error: error,
+        msg: message
+      }
+    };
     setState(newState);
   }
 
   const handleSubmit = () => {
+    if (state.step != steps.start) return;
+
     const { day, month, year } = state;
     let newState = { ...state }
-    // debugger;
 
     // when a field has an error
-    if (state.day.error || state.month.error || state.year.error) return;
+    if (state.day.error || state.month.error || state.year.error || state.globalError) return;
 
     // check empty fields
     let emptyFields = false;
@@ -102,31 +131,22 @@ function App() {
       }
     })
 
-    //check invalid date
+    //check invalid date (select more days per month)
     const inputDate = new Date(year.value, month.value - 1, day.value);
+
+    //Check if the day did not move to the next month
     const intputDay = inputDate.getDate();
     let validDate = true;
 
-    if (Number(day.value) !== intputDay && !emptyFields) {
-      newState.day.error = true;
+    if (Number(day.value) !== intputDay && emptyFields == false) {
       newState.day.msg = 'Must be a valid date';
-
-      newState.month.error = true;
-      newState.month.msg = '';
-
-      newState.year.error = true;
-      newState.year.msg = '';
-
+      newState.globalError = true;
       validDate = false;
     }
 
     //calculate difference
-    if (validDate && !emptyFields) {
-      const now = new Date();
-      const differenceInDays = Math.floor((now - inputDate) / (1000 * 60 * 60 * 24));
-      // newState.difference = differenceInDays;
-      difference.current = differenceInDays;
-
+    if (validDate == true && emptyFields == false) {
+      newState.step = steps.calc;
     }
 
     setState(newState)
@@ -139,57 +159,56 @@ function App() {
         <section className="card">
 
           {/* form */}
-          <form className="form" onSubmit={handleSubmit}>
+          <form className="form">
             <div className='form__section'>
               <label
-                className={state.day.error ? 'form__label--error' : 'form__label'}
+                className={state.day.error || state.globalError ? 'form__label--error' : 'form__label'}
                 htmlFor="day">
                 DAY
               </label>
-
               <input
-                className={state.day.error ? 'form__input form__input--error' : 'form__input'}
+                className={state.day.error || state.globalError ? 'form__input form__input--error' : 'form__input'}
                 name="day"
                 type="number"
                 placeholder="DD"
                 value={state.day.value}
                 onChange={onInput}
               />
-              {state.day.error && <p className='form__input--error-msg'>{state.day.msg}</p>}
+              {state.day.error || state.globalError && <p className='form__input--error-msg'>{state.day.msg}</p>}
             </div>
 
             <div className='form__section'>
               <label
-                className={state.month.error ? 'form__label--error' : 'form__label'}
+                className={state.month.error || state.globalError ? 'form__label--error' : 'form__label'}
                 htmlFor="month">
                 MONTH
               </label>
               <input
-                className={state.month.error ? 'form__input form__input--error' : 'form__input'}
+                className={state.month.error || state.globalError ? 'form__input form__input--error' : 'form__input'}
                 name="month"
                 type="number"
                 placeholder="MM"
                 value={state.month.value}
                 onChange={onInput}
               />
-              {state.month.error && <p className='form__input--error-msg'>{state.month.msg}</p>}
+              {state.month.error || state.globalError && <p className='form__input--error-msg'>{state.month.msg}</p>}
             </div>
 
             <div className='form__section'>
               <label
-                className={state.year.error ? 'form__label--error' : 'form__label'}
+                className={state.year.error || state.globalError ? 'form__label--error' : 'form__label'}
                 htmlFor="year">
                 YEAR
               </label>
               <input
-                className={state.year.error ? 'form__input form__input--error' : 'form__input'}
+                className={state.year.error || state.globalError ? 'form__input form__input--error' : 'form__input'}
                 name="year"
                 type="number"
                 placeholder="YYYY"
                 value={state.year.value}
                 onChange={onInput}
               />
-              {state.year.error && <p className='form__input--error-msg'>{state.year.msg}</p>}
+              {state.year.error || state.globalError && <p className='form__input--error-msg'>{state.year.msg}</p>}
             </div>
           </form>
 
@@ -202,20 +221,20 @@ function App() {
           </div>
 
           {/* results */}
-          <div>
+          <div className='results'>
 
             <div className="results-section">
-              <p className='results-section__result'>{results.years}</p>
+              <p className='results-section__result'>{results.yearsI}</p>
               <p className='results-section__label'>years</p>
             </div>
 
             <div className="results-section">
-              <p className='results-section__result'>{results.months}</p>
+              <p className='results-section__result'>{results.monthsI}</p>
               <p className='results-section__label'>months</p>
             </div>
 
             <div className="results-section">
-              <p className='results-section__result'>{results.days}</p>
+              <p className='results-section__result'>{results.daysI}</p>
               <p className='results-section__label'>days</p>
             </div>
 

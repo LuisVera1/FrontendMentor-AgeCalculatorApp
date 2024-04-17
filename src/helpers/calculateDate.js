@@ -1,20 +1,23 @@
-export const getYears = (sTime, eTime) => {
-	const sDate = new Date(sTime.year, sTime.month, sTime.day);
-	const eDate = new Date(eTime.year, eTime.month, eTime.day);
-	const days = (eDate - sDate) / (1000 * 60 * 60 * 24);
+export const getYears = (sDate, eDate) => {
+	const days = Math.floor((eDate - sDate) / (1000 * 60 * 60 * 24));
 
 	if (days < 0) return null;
 
 	const years = Math.floor(days / 365);
 
-	const exactDate = new Date(eTime.year - years, eTime.month, eTime.day);
-	const remainDays = days - (eDate - exactDate) / (1000 * 60 * 60 * 24);
+	const eYear = eDate.getFullYear();
+	const eMonth = eDate.getMonth();
+	const eDay = eDate.getDate();
+
+	const exactDate = new Date(eYear - years, eMonth, eDay);
+	const remainDays =
+		days - Math.floor((eDate - exactDate) / (1000 * 60 * 60 * 24));
 
 	return {
 		years,
 		remainDays,
-		currentMonth: eTime.month,
-		currentYear: eTime.year - years,
+		currentMonth: eMonth,
+		currentYear: eYear - years,
 	};
 };
 

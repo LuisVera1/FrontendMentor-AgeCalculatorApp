@@ -4,13 +4,22 @@ const errorMessages = {
 	notValidYear: 'Must be in the past',
 };
 
+/**
+ * Validate inputs to eval if the value is logic
+ * @param {*} value
+ * @param {*} name
+ * @example
+ * year <= current year
+ * months between 1 and 12
+ * days between 1 and 31
+ */
 export const validateForm = ({ value, name }) => {
 	let error = false;
 	let message = '';
 
 	// validate day
 	if (name === 'day') {
-		if (value > 0 && value < 32) {
+		if (value >= 1 && value <= 31) {
 			error = false;
 			message = '';
 		} else {
@@ -21,7 +30,7 @@ export const validateForm = ({ value, name }) => {
 
 	// validate month
 	if (name === 'month') {
-		if (value > 0 && value < 13) {
+		if (value >= 1 && value <= 12) {
 			error = false;
 			message = '';
 		} else {

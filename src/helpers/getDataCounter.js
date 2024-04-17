@@ -1,16 +1,18 @@
-const getLastDigit = (number) => {
+const getStartNumber = (number) => {
+	if (number >= 10) return number - 10;
+
 	const numStr = number.toString();
 	const numberLength = numStr.length;
-	return Number(numStr[numberLength - 1]);
+	return number - Number(numStr[numberLength - 1]);
 };
 
 export const getDataCounter = ({ years, months, days }) => {
 	return {
 		years: years,
-		yearsI: years - getLastDigit(years),
+		yearsI: getStartNumber(years),
 		months: months,
-		monthsI: months - getLastDigit(months),
+		monthsI: getStartNumber(months),
 		days: days,
-		daysI: days - getLastDigit(days),
+		daysI: getStartNumber(days),
 	};
 };

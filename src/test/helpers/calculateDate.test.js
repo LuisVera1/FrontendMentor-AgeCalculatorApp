@@ -6,17 +6,8 @@ import {
 
 describe('Test in calculateDate.js', () => {
 	test('must return years and reamin days', () => {
-		const sDate = {
-			year: 1998,
-			month: 1,
-			day: 15,
-		};
-
-		const eDate = {
-			year: 2024,
-			month: 2,
-			day: 24,
-		};
+		const sDate = new Date(1998, 1, 15);
+		const eDate = new Date(2024, 2, 24);
 
 		const difference = {
 			years: 26,
@@ -44,17 +35,8 @@ describe('Test in calculateDate.js', () => {
 	});
 
 	test('must return year, months and days', () => {
-		const sDate = {
-			year: 1998,
-			month: 1,
-			day: 15,
-		};
-
-		const eDate = {
-			year: 2024,
-			month: 2,
-			day: 24,
-		};
+		const sDate = new Date(1998, 1, 15);
+		const eDate = new Date(2024, 2, 24);
 
 		const result = {
 			years: 26,
@@ -66,17 +48,8 @@ describe('Test in calculateDate.js', () => {
 	});
 
 	test('must return years, months and days between no leap years', () => {
-		const sDate = {
-			year: 2020,
-			month: 2,
-			day: 15,
-		};
-
-		const eDate = {
-			year: 2024,
-			month: 1,
-			day: 25,
-		};
+		const sDate = new Date(2020, 2, 15);
+		const eDate = new Date(2024, 1, 25);
 
 		const result = {
 			years: 3,
@@ -88,17 +61,8 @@ describe('Test in calculateDate.js', () => {
 	});
 
 	test('must return years, months, and days between two very distant dates', () => {
-		const sDate = {
-			year: 1614,
-			month: 11,
-			day: 31,
-		};
-
-		const eDate = {
-			year: 2024,
-			month: 0,
-			day: 1,
-		};
+		const sDate = new Date(1614, 11, 31);
+		const eDate = new Date(2024, 0, 1);
 
 		const result = {
 			years: 409,
@@ -110,17 +74,8 @@ describe('Test in calculateDate.js', () => {
 	});
 
 	test('if the data is incorrect, the function returns null', () => {
-		const sDate = {
-			year: 1998,
-			month: 1,
-			day: 15,
-		};
-
-		const eDate = {
-			year: 2024,
-			month: 2,
-			day: 24,
-		};
+		const sDate = new Date(1998, 1, 15);
+		const eDate = new Date(2024, 2, 24);
 
 		expect(calculateDate(eDate, sDate)).toBeNull();
 	});
