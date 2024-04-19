@@ -99,6 +99,7 @@ function App() {
   const onInput = (event) => {
     const { value, name } = event.target;
     const { error, message } = validateForm({ value, name });
+
     const newState = {
       ...state,
       globalError: false,
@@ -113,8 +114,8 @@ function App() {
 
   const handleSubmit = () => {
     if (state.step != steps.start) return;
-
     const { day, month, year } = state;
+
     let newState = { ...state }
 
     // when a field has an error
@@ -144,6 +145,13 @@ function App() {
       validDate = false;
     }
 
+    //validate year less than 100
+    const currentYear = new Date().getFullYear()
+    if (year.value < 100 && year.value != '') {
+      alert(`Only years between 100 - ${currentYear}`)
+      return;
+    }
+
     //calculate difference
     if (validDate == true && emptyFields == false) {
       newState.step = steps.calc;
@@ -160,6 +168,7 @@ function App() {
 
           {/* form */}
           <form className="form">
+            {/* input-day */}
             <div className='form__section'>
               <label
                 className={state.day.error || state.globalError ? 'form__label--error' : 'form__label'}
@@ -168,15 +177,18 @@ function App() {
               </label>
               <input
                 className={state.day.error || state.globalError ? 'form__input form__input--error' : 'form__input'}
+                data-testid="input-day"
+                // inputProps={{ "data-testid": "input-day" }}
                 name="day"
                 type="number"
                 placeholder="DD"
                 value={state.day.value}
                 onChange={onInput}
               />
-              {state.day.error || state.globalError && <p className='form__input--error-msg'>{state.day.msg}</p>}
+              {(state.day.error || state.globalError) && <p data-testid="error-day" className='form__input--error-msg'>{state.day.msg}</p>}
             </div>
 
+            {/* input-month */}
             <div className='form__section'>
               <label
                 className={state.month.error || state.globalError ? 'form__label--error' : 'form__label'}
@@ -184,6 +196,7 @@ function App() {
                 MONTH
               </label>
               <input
+                data-testid="input-month"
                 className={state.month.error || state.globalError ? 'form__input form__input--error' : 'form__input'}
                 name="month"
                 type="number"
@@ -191,9 +204,10 @@ function App() {
                 value={state.month.value}
                 onChange={onInput}
               />
-              {state.month.error || state.globalError && <p className='form__input--error-msg'>{state.month.msg}</p>}
+              {state.month.error && <p data-testid="error-month" className='form__input--error-msg'>{state.month.msg}</p>}
             </div>
 
+            {/* input-year */}
             <div className='form__section'>
               <label
                 className={state.year.error || state.globalError ? 'form__label--error' : 'form__label'}
@@ -201,6 +215,7 @@ function App() {
                 YEAR
               </label>
               <input
+                data-testid="input-year"
                 className={state.year.error || state.globalError ? 'form__input form__input--error' : 'form__input'}
                 name="year"
                 type="number"
@@ -208,15 +223,16 @@ function App() {
                 value={state.year.value}
                 onChange={onInput}
               />
-              {state.year.error || state.globalError && <p className='form__input--error-msg'>{state.year.msg}</p>}
+              {state.year.error && <p data-testid="error-year" className='form__input--error-msg'>{state.year.msg}</p>}
             </div>
           </form>
 
           {/* button */}
           <div className="division">
             <button className='division__button'
+              data-testid="button-submit"
               onClick={handleSubmit}>
-              <img className='division-icon' src="/icon-arrow.svg" alt="calculate" />
+              <img className='division-icon' height="46px" width="46px" src="/icon-arrow.svg" alt="calculate" />
             </button>
           </div>
 
@@ -224,17 +240,17 @@ function App() {
           <div className='results'>
 
             <div className="results-section">
-              <p className='results-section__result'>{results.yearsI}</p>
+              <p data-testid="p-years" className='results-section__result'>{results.yearsI}</p>
               <p className='results-section__label'>years</p>
             </div>
 
             <div className="results-section">
-              <p className='results-section__result'>{results.monthsI}</p>
+              <p data-testid="p-months" className='results-section__result'>{results.monthsI}</p>
               <p className='results-section__label'>months</p>
             </div>
 
             <div className="results-section">
-              <p className='results-section__result'>{results.daysI}</p>
+              <p data-testid="p-days" className='results-section__result'>{results.daysI}</p>
               <p className='results-section__label'>days</p>
             </div>
 

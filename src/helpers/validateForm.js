@@ -1,4 +1,4 @@
-const errorMessages = {
+export const errorMessages = {
 	notValidDate: 'Must be a valid day',
 	notValidMonth: 'Must be a valid month',
 	notValidYear: 'Must be in the past',
