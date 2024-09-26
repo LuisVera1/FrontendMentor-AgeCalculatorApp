@@ -1,26 +1,4 @@
-export const getYears = (sDate, eDate) => {
-	const days = Math.floor((eDate - sDate) / (1000 * 60 * 60 * 24));
-
-	if (days < 0) return null;
-
-	const years = Math.floor(days / 365);
-
-	const eYear = eDate.getFullYear();
-	const eMonth = eDate.getMonth();
-	const eDay = eDate.getDate();
-
-	const exactDate = new Date(eYear - years, eMonth, eDay);
-	const remainDays =
-		days - Math.floor((eDate - exactDate) / (1000 * 60 * 60 * 24));
-
-	return {
-		years,
-		remainDays,
-		currentMonth: eMonth,
-		currentYear: eYear - years,
-	};
-};
-
+// calculate if a given year is leap
 const isLeapYear = (year) => {
 	if (year % 4 == 0) {
 		if (year % 100 == 0) {
@@ -33,14 +11,17 @@ const isLeapYear = (year) => {
 	} else {
 		return false;
 	}
-
 	return false;
 };
 
-export const getMonths = ({ remainDays, currentMonth, currentYear }) => {
+export const calculateDate = (sTime, eTime) => {
+
+	if(sTime > eTime) return null;
+
+	let sYearTmp = sTime.getFullYear();
 	const daysInMonths = {
 		0: 31,
-		1: isLeapYear(currentYear) ? 29 : 28,
+		1: isLeapYear(sYearTmp),
 		2: 31,
 		3: 30,
 		4: 31,
@@ -53,32 +34,40 @@ export const getMonths = ({ remainDays, currentMonth, currentYear }) => {
 		11: 31,
 	};
 
-	let days = remainDays;
-	let months = 0;
-	let previusMonth = currentMonth == 0 ? 11 : currentMonth - 1;
+	//calculate days
+	let days = 0;
+	const eDay = eTime.getDate();
+	const sDay = sTime.getDate();
 
-	while (days > daysInMonths[previusMonth]) {
-		months++;
-		days -= daysInMonths[previusMonth];
+	let nextMonth = sTime.getMonth() + 1;
+	if(nextMonth >= 12) nextMonth = 0;
 
-		if (previusMonth == 0) {
-			previusMonth = 11;
-		} else {
-			previusMonth -= 1;
-		}
+	let fixMonths = 0;
+	if (sDay > eDay) {
+		//start day > end day
+		// days in next month - (startDay - endDay)
+		days = daysInMonths[nextMonth] - (sDay - eDay);
+		fixMonths++;
+	} else {
+		days = eDay - sDay;
 	}
 
-	return { months, days };
-};
+	//calculate months
+	let months = 0;
+	const eMonths = eTime.getMonth() - fixMonths;
+	const sMonths = sTime.getMonth();
+	let fixYears = 0;
 
-/*   main function   */
-export const calculateDate = (sTime, eTime) => {
-	const yearsAndDays = getYears(sTime, eTime);
-	if (!yearsAndDays) return null;
+	if (sMonths > eMonths) {
+		months = 12 - (sMonths - eMonths);
+		fixYears++;
+	} else {
+		months = eMonths - sMonths;
+	}
 
-	const { years, remainDays, currentMonth, currentYear } = yearsAndDays;
-	const monthsAndDays = getMonths({ remainDays, currentMonth, currentYear });
-	const { months, days } = monthsAndDays;
-
-	return { years, months, days };
+	//Calculate years
+	const eYear = eTime.getFullYear();
+	const sYear = sTime.getFullYear();
+	const years = eYear - sYear - fixYears;
+	return { days, months, years };
 };
